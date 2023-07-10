@@ -21,8 +21,9 @@ return new class extends Migration
             $table->string('cover_image_path')->nullable();
             $table->string('theme')->nullable();
             $table->foreignId('user_id')
-                ->constrained('user', 'id') // ->constrained('user', 'id') ;
-                ->cascadeOnDelete();
+                ->nullable()
+                ->constrained('users', 'id') // ->constrained('user', 'id') ;
+                ->nullOnDelete();
             $table->enum('status', ['active', 'archived'])->default('active');
             $table->timestamps();
         });
