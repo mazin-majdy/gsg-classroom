@@ -9,8 +9,14 @@ class Classroom extends Model
 {
     use HasFactory;
 
-    protected $fillable= [
+    protected $fillable = [
         'name', 'section', 'subject', 'room', 'theme', 'cover_image_path', 'code',
 
     ];
+
+    // default
+    public function getRouteKeyName()
+    {
+        return 'id';
+    }
 }

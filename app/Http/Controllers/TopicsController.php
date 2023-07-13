@@ -24,7 +24,7 @@ class TopicsController extends Controller
     {
         $topic = new Topic();
         $topic->name = $request->post('name');
-        $topic->classroom_id = 1;
+        $topic->classroom_id = 4;
         $topic->save();
 
         return redirect()->route('topics.index');

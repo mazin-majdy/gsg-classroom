@@ -19,19 +19,24 @@ Route::get('/', function () {
     return view('welcome');
 })->name('home');
 
-Route::get('/classrooms', [ClassroomsController::class, 'index'])->name('classrooms.index');
+// Route::get('/classrooms', [ClassroomsController::class, 'index'])->name('classrooms.index');
 
-Route::get('/classrooms/{classroom}', [CLassroomsController::class, 'show'])->name('classrooms.show')->where('classroom', '\d+');
+// Route::get('/classrooms/{classroom}', [CLassroomsController::class, 'show'])->name('classrooms.show')->where('classroom', '\d+');
 
-Route::get('/classrooms/create', [CLassroomsController::class, 'create'])->name('classrooms.create');
+// Route::get('/classrooms/create', [CLassroomsController::class, 'create'])->name('classrooms.create');
 
-Route::post('/classrooms', [CLassroomsController::class, 'store'])->name('classrooms.store');
+// Route::post('/classrooms', [CLassroomsController::class, 'store'])->name('classrooms.store');
 
-Route::get('/classrooms/{classroom}/edit', [ClassroomsController::class, 'edit'])->name('classrooms.edit')->whereNumber('id');
+// Route::get('/classrooms/{classroom}/edit', [ClassroomsController::class, 'edit'])->name('classrooms.edit')->whereNumber('id');
 
-Route::put('/classrooms/{classroom}', [ClassroomsController::class, 'update'])->name('classrooms.update')->whereNumber('id');
+// Route::put('/classrooms/{classroom}', [ClassroomsController::class, 'update'])->name('classrooms.update')->whereNumber('id');
 
-Route::delete('/classrooms/{classroom}', [ClassroomsController::class, 'destroy'])->name('classrooms.destroy')->whereNumber('id');
+// Route::delete('/classrooms/{classroom}', [ClassroomsController::class, 'destroy'])->name('classrooms.destroy')->whereNumber('id');
+
+Route::resource('/classrooms', ClassroomsController::class)->names([
+    // 'index' => 'classrooms/index',
+    // 'create' => 'classrooms/create'
+])->where(['classroom' => '\d+']);
 
 Route::prefix('/topics')->name('topics.')->group(function(){
     Route::get('/', [TopicsController::class, 'index'])->name('index');
@@ -42,3 +47,4 @@ Route::prefix('/topics')->name('topics.')->group(function(){
     Route::put('/topics/{topic}', [TopicsController::class, 'update'])->name('update');
     Route::delete('/topics/{topic}', [TopicsController::class, 'destroy'])->name('destroy');
 });
+

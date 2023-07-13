@@ -1,5 +1,6 @@
-@include('partials.header')
-
+@extends('layouts.master')
+@section('title', 'Edit Topic' . ' ' . $topic->name)
+@section('content')
 <div class="container">
 
     <h1>Edit Topic</h1>
@@ -18,4 +19,4 @@
     </form>
 </div>
 
-@include('partials.footer')
+@endsection
