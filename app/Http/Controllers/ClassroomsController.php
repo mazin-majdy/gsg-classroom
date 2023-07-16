@@ -7,6 +7,7 @@ use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Http\RedirectResponse;
+use App\Http\Requests\ClassroomRequest;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Redirect;
@@ -29,11 +30,18 @@ class ClassroomsController extends Controller
 
     public function create()
     {
-        return view('classrooms.create');
+        return view('classrooms.create', [
+            'classroom' => new Classroom()
+        ]);
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(ClassroomRequest $request): RedirectResponse
     {
+
+        // Validation
+
+
+
         // dd($request->except('name', 'cover_image'));
         // dd($request->only('name', 'cover_image'));
 
@@ -54,7 +62,7 @@ class ClassroomsController extends Controller
         // $data = $request->all();
         // $data['code'] = Str::random(8);
 
-        if($request->hasFile('cover_image')){
+        if ($request->hasFile('cover_image')) {
             $file = $request->file('cover_image'); //Uploaded File
             // $path = $file->storeAs('/covers', 'name.png', 'uploads');
             // config > fileSystems > edit public
@@ -101,9 +109,10 @@ class ClassroomsController extends Controller
         return view('classrooms.edit', compact('classroom'));
     }
 
-    public function update(Request $request, $id)
+    public function update(ClassroomRequest $request, $id)
     {
 
+        $validated = $request->validated();
         // Method 1
         $classroom = Classroom::findOrFail($id);
 
@@ -114,46 +123,77 @@ class ClassroomsController extends Controller
 
         // $classroom->save(); // update
 
-        $img = $classroom->cover_image_path;
-
-        if($request->hasFile('cover_image')){
-
-            $imagePath = public_path('storage/'. $img);
-            if(File::exists($imagePath)){
-                File::delete($imagePath);
-            }
-
-            $file = $request->file('cover_image'); //Uploaded File
-            $img = $file->store('/covers', 'public');
-            $request->merge([
-                'cover_image_path' => $img,
+        if ($request->hasFile('cover_image')) {
+            // Solution 1 for updating image
+            $file = $request->file('cover_image');
+            $name = $classroom->cover_image_path ?? (Str::rendom(40) . '.' . $file->getClientOriginalExtension());
+            $path = $file->storeAs('/covers', basename($name), [
+                'disk' => Classroom::$disk
             ]);
+            $request->merge([
+                'cover_image_path' => $path
+            ]);
+
+            // Solution 2 for updating image
+
+            // $path = Classroom::uploadCoverImage($file);
+            // $request->merge([
+            //     'cover_image_path' => $path
+            // ]);
         }
+        // Continue Solution 2
+        // $old = $classroom->cover_image_path;
+
+        // $img = $classroom->cover_image_path;
+
+        // if($request->hasFile('cover_image')){
+
+        //     $imagePath = public_path('storage/'. $img);
+        //     if(File::exists($imagePath)){
+        //         File::delete($imagePath);
+        //     }
+
+        //     $file = $request->file('cover_image'); //Uploaded File
+        //     $img = $file->store('/covers', 'public');
+        //     $request->merge([
+        //         'cover_image_path' => $img,
+        //     ]);
+        // }
         // Mass assignment
-        $classroom->update($request->all());
+        $classroom->update($validated);
         // $classroom->fill($request->all())->save();
 
+        // Continue Solution 2
+        // if ($old && $$old != $classroom->cover_image_path) {
+        //     Classroom::deleteCoverImage($old);
+        // }
 
 
         // Same result (->with('success', 'Classroom updated'))
         Session::flash('success', 'Classroom updated');
 
         return Redirect::route('classrooms.index');
-            // ->with('success', 'Classroom updated');
+        // ->with('success', 'Classroom updated');
     }
 
-    public function destroy($id)
+    public function destroy(Classroom $classroom)
     {
-        $classroom = Classroom::find($id);
-        $imagePath = public_path('storage/'. $classroom->cover_image_path);
-        if(File::exists($imagePath)){
-            File::delete($imagePath);
-        }
+        // Solution 1 for deleting image
+        // $classroom = Classroom::find($id);
+        // $imagePath = public_path('storage/' . $classroom->cover_image_path);
+        // if (File::exists($imagePath)) {
+        //     File::delete($imagePath);
+        // }
 
         // Classroom::where('id', '=', $id)->delete(); // Same Result
-        $count = Classroom::destroy($id);
+        $classroom->delete();
+        // Solution 2 for deleting image
+        if (File::exists($classroom->cover_image_path)) {
 
-        // $classroom->delete();
+            Classroom::deleteCoverImage($classroom->cover_image_path);
+        }
+        // $count = Classroom::destroy($classroom->id);
+
 
         return redirect(route('classrooms.index'))->with('success', 'Classroom deleted');
     }

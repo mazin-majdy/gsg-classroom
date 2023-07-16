@@ -22,6 +22,9 @@ class TopicsController extends Controller
 
     public function store(Request $request)
     {
+        $request->validate([
+            'name' => 'required'
+        ]);
         $topic = new Topic();
         $topic->name = $request->post('name');
         $topic->classroom_id = 4;
@@ -44,6 +47,9 @@ class TopicsController extends Controller
 
     public function update(Request $request, $id)
     {
+        $request->validate([
+            'name' => 'required'
+        ]);
 
         $topic = Topic::findOrFail($id);
 
