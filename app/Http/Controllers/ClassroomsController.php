@@ -126,13 +126,11 @@ class ClassroomsController extends Controller
         if ($request->hasFile('cover_image')) {
             // Solution 1 for updating image
             $file = $request->file('cover_image');
-            $name = $classroom->cover_image_path ?? (Str::rendom(40) . '.' . $file->getClientOriginalExtension());
+            $name = $classroom->cover_image_path ?? (Str::random(40) . '.' . $file->getClientOriginalExtension());
             $path = $file->storeAs('/covers', basename($name), [
                 'disk' => Classroom::$disk
             ]);
-            $request->merge([
-                'cover_image_path' => $path
-            ]);
+            $validated['cover_image_path'] =  $path;
 
             // Solution 2 for updating image
 
@@ -186,12 +184,11 @@ class ClassroomsController extends Controller
         // }
 
         // Classroom::where('id', '=', $id)->delete(); // Same Result
-        $classroom->delete();
         // Solution 2 for deleting image
-        if (File::exists($classroom->cover_image_path)) {
-
+        if ($classroom->cover_image_path) {
             Classroom::deleteCoverImage($classroom->cover_image_path);
         }
+        $classroom->delete();
         // $count = Classroom::destroy($classroom->id);
 
 
