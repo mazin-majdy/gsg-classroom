@@ -16,8 +16,15 @@ class ClassroomsController extends Controller
 {
     public function index(Request $request)
     {
-        $classrooms = Classroom::orderBy('created_at', 'DESC')->get(); // return Collection of Classroom
+        $classrooms = Classroom::active()->status('active')
+            ->recent()
+            ->orderBy('created_at', 'DESC')
+            ->withoutGlobalScope('user')
+            ->get(); // return Collection of Classroom
 
+        // $classrooms = DB::table('classrooms')
+        // ->whereNull('deleted_at')
+        // ->orderBy('created_at', 'DESC')->get();
 
         // session()->get('success');
         // Session::get('success');
@@ -185,13 +192,46 @@ class ClassroomsController extends Controller
 
         // Classroom::where('id', '=', $id)->delete(); // Same Result
         // Solution 2 for deleting image
-        if ($classroom->cover_image_path) {
-            Classroom::deleteCoverImage($classroom->cover_image_path);
-        }
+
+        // if ($classroom->cover_image_path) {
+        //     Classroom::deleteCoverImage($classroom->cover_image_path);
+        // }
+
         $classroom->delete();
         // $count = Classroom::destroy($classroom->id);
 
 
         return redirect(route('classrooms.index'))->with('success', 'Classroom deleted');
+    }
+
+    public function trashed()
+    {
+        $classrooms = Classroom::onlyTrashed()
+            ->latest('deleted_at')
+            ->get();
+
+        return view('classrooms.trashed', compact('classrooms'));
+    }
+
+    public function restore($id)
+    {
+        $classroom = Classroom::onlyTrashed()->findOrFail($id);
+        $classroom->restore();
+
+        return redirect()
+            ->route('classrooms.index')
+            ->with('success', "Classroom ({$classroom->name}) restored");
+    }
+
+    public function forceDelete($id)
+    {
+        $classroom = Classroom::withTrashed()->findOrFail($id);
+        $classroom->forceDelete();
+
+        Classroom::deleteCoverImage($classroom->cover_image_path);
+
+        return redirect()
+            ->route('classrooms.index')
+            ->with('success', "Classroom ({$classroom->name}) deleted forever!");
     }
 }

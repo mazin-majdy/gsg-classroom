@@ -14,7 +14,7 @@
                 </ul>
             </div>
         @endif
-        <form action="{{ route('topics.store') }}" method="POST">
+        <form action="{{ route('topics.store', 4) }}" method="POST">
             @csrf
             <div class="form-floating mb-3">
                 <input type="text" class="form-control @error('name')is-invalid @enderror" name="name" id="name"

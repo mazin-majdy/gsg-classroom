@@ -14,7 +14,7 @@
                 </ul>
             </div>
         @endif
-        <form action="{{ route('topics.update', $topic->id) }}" method="POST">
+        <form action="{{ route('topics.update', [$topic->id, 4]) }}" method="POST">
             @csrf
             @method('put')
             <div class="form-floating mb-3">

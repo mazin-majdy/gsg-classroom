@@ -30,7 +30,7 @@ class TopicsController extends Controller
         $topic->classroom_id = 4;
         $topic->save();
 
-        return redirect()->route('topics.index');
+        return redirect()->route('topics.index', 4);
     }
 
     public function show($id)
@@ -55,13 +55,43 @@ class TopicsController extends Controller
 
         $topic->update($request->all());
 
-        return Redirect::route('topics.index');
+        return Redirect::route('topics.index', 4);
     }
 
     public function destroy($id)
     {
         $topic = Topic::findOrFail($id);
         $topic->destroy($id);
-        return redirect(route('topics.index'));
+        return redirect(route('topics.index', 4));
+    }
+
+    public function trashed()
+    {
+        $topics = Topic::onlyTrashed()
+            ->latest('deleted_at')
+            ->get();
+
+        return view('topics.trashed', compact('topics'));
+    }
+
+    public function restore($id)
+    {
+        $topic = Topic::onlyTrashed()->findOrFail($id);
+        $topic->restore();
+
+        return redirect()
+            ->route('topics.index', 4)
+            ->with('success', "Topic ({$topic->name}) restored");
+    }
+
+    public function forceDelete($id)
+    {
+        $topic = Topic::withTrashed()->findOrFail($id);
+        $topic->forceDelete();
+
+
+        return redirect()
+            ->route('topics.index', 4)
+            ->with('success', "Topic ({$topic->name}) deleted forever!");
     }
 }
