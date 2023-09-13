@@ -40,6 +40,11 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+
+        'admin' => [
+            'driver' => 'session',
+            'provider' => 'admins'
+        ],
     ],
 
     /*
@@ -63,6 +68,10 @@ return [
         'users' => [
             'driver' => 'eloquent',
             'model' => App\Models\User::class,
+        ],
+        'admins' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Admin::class,
         ],
 
         // 'users' => [
@@ -94,8 +103,14 @@ return [
         'users' => [
             'provider' => 'users',
             'table' => 'password_reset_tokens',
-            'expire' => 60, // after 60 minutes will expire
-            'throttle' => 60, // after 60 seconds he can asked another token
+            'expire' => 120, // after 60 minutes will expire
+            'throttle' => 120, // after 60 seconds he can asked another token
+        ],
+        'admins' => [
+            'provider' => 'admins',
+            'table' => 'password_reset_tokens',
+            'expire' => 30, // after 60 minutes will expire
+            'throttle' => 300, // after 60 seconds he can asked another token
         ],
     ],
 

@@ -2,18 +2,29 @@
 
 namespace App\Http\Controllers;
 
+use Exception;
 use App\Models\Classroom;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Http\RedirectResponse;
 use App\Http\Requests\ClassroomRequest;
+use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\URL;
 
 class ClassroomsController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware('subscribed')->only('create', 'store');
+        $this->authorizeResource(Classroom::class); // second parameter is , 'classroom' --> parameter of route
+    }
     public function index(Request $request)
     {
         $classrooms = Classroom::active()->status('active')
@@ -78,10 +89,25 @@ class ClassroomsController extends Controller
                 'cover_image_path' => $path,
             ]);
         }
-        $request->merge([
-            'code' => Str::random(8)
-        ]);
-        $classroom = Classroom::create($request->all());
+        // $request->merge([
+        //     'code' => Str::random(8)
+        // ]);
+
+        DB::beginTransaction(); // Turn off commit
+
+        try {
+            $classroom = Classroom::create($request->all());
+
+            $classroom->join(Auth::id(), 'teacher');
+
+            DB::commit();
+        } catch (QueryException $e) {
+            DB::rollback();
+            return back()
+                ->with('success', $e->getMessage())
+                ->withInput();
+        }
+
 
         // Alternative for Mass assignment
         // $classroom = new Classroom($request->all());
@@ -102,7 +128,15 @@ class ClassroomsController extends Controller
         // Classroom ::where('id', '=', $id)->first(); same result
         // $classroom = Classroom::findOrFail($id);
 
-        return view('classrooms.show', compact('classroom'));
+        // $invitation_link = URL::temporarySignedRoute('classrooms.join', now()->addHours(3), [
+        //     'classroom' => $classroom->id,
+        //     'code' => $classroom->code,
+        // ]);
+        $invitation_link = URL::signedRoute('classrooms.join', [
+            'classroom' => $classroom->id,
+            'code' => $classroom->code,
+        ]);
+        return view('classrooms.show', compact('classroom', 'invitation_link'));
     }
 
 
@@ -228,7 +262,7 @@ class ClassroomsController extends Controller
         $classroom = Classroom::withTrashed()->findOrFail($id);
         $classroom->forceDelete();
 
-        Classroom::deleteCoverImage($classroom->cover_image_path);
+        // Classroom::deleteCoverImage($classroom->cover_image_path);
 
         return redirect()
             ->route('classrooms.index')

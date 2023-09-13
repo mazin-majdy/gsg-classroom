@@ -19,14 +19,14 @@
                     <ul class="dropdown-menu dropdown-menu-end">
 
                         <li>
-                            <form action="{{ route('topics.restore', [$topic->id, 4]) }}" method="post">
+                            <form action="{{ route('topics.restore', [$topic->id, 37]) }}" method="post">
                                 @csrf
                                 @method('put')
                                 <button class="dropdown-item">Restore</button>
                             </form>
                         </li>
                         <li>
-                            <form action="{{ route('topics.force-delete', [$topic->id, 4]) }}" method="post">
+                            <form action="{{ route('topics.force-delete', [$topic->id, 37]) }}" method="post">
                                 @csrf
                                 @method('delete')
                                 <button class="dropdown-item">Force Delete</button>

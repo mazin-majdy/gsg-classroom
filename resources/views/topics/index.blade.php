@@ -5,8 +5,8 @@
 <div class="container">
 
     <h1>Topics</h1>
-    <a href="{{ route('topics.create', 4) }}" class="btn btn-primary px-3 my-2">Create <i class="fa-solid fa-plus"></i></a>
-    <a href="{{ route('topics.trashed', 4) }}" class="btn btn-primary px-3 my-2">Trashed <i class="fa-solid fa-trash"></i></a>
+    <a href="{{ route('topics.create', 37) }}" class="btn btn-primary px-3 my-2">Create <i class="fa-solid fa-plus"></i></a>
+    <a href="{{ route('topics.trashed', 37) }}" class="btn btn-primary px-3 my-2">Trashed <i class="fa-solid fa-trash"></i></a>
     <div class="col my-5">
 
         @foreach ($topics as $topic)
@@ -18,10 +18,10 @@
                         <i class="fa-solid fa-ellipsis-vertical"></i>
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a href="{{ route('topics.show', [$topic->id, 4]) }}" class="dropdown-item" type="button">Show</a></li>
-                        <li><a href="{{ route('topics.edit', [$topic->id, 4]) }}" class="dropdown-item" type="button">Edit</a></li>
+                        <li><a href="{{ route('topics.show', [$topic->id, 37]) }}" class="dropdown-item" type="button">Show</a></li>
+                        <li><a href="{{ route('topics.edit', [$topic->id, 37]) }}" class="dropdown-item" type="button">Edit</a></li>
                         <li>
-                            <form action="{{ route('topics.destroy', [$topic->id, 4]) }}" method="post">
+                            <form action="{{ route('topics.destroy', [$topic->id, 37]) }}" method="post">
                                 @csrf
                                 @method('delete')
                                 <button class="dropdown-item">Delete</button>

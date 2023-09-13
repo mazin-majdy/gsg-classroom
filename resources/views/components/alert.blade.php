@@ -1,3 +1,3 @@
-@if ($success)
-    <div class="alert alert-success">{{ $success }}</div>
+@if ($name)
+    <div class="alert alert-success">{{ $name }}</div>
 @endif
