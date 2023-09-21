@@ -104,6 +104,16 @@ class User extends Authenticatable implements MustVerifyEmail, HasLocalePreferen
         return $this->hasMany(Subscription::class);
     }
 
+    public function receivedMessages()
+    {
+        return $this->morphMany(Message::class, 'recipient');
+    }
+
+    public function sentMessages()
+    {
+        return $this->hasMany(Message::class, 'sender_id');
+    }
+
 
     // في حال كان عندي الايميل مش ستاندرد بضطر اعمل الفنكشن هاي
     // public function routeNotificationForMail($notification = null)

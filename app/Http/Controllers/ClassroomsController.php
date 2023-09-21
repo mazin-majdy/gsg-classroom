@@ -268,4 +268,11 @@ class ClassroomsController extends Controller
             ->route('classrooms.index')
             ->with('success', "Classroom ({$classroom->name}) deleted forever!");
     }
+
+    public function chat(Classroom $classroom)
+    {
+        return view('classrooms.chat', [
+            'classroom' => $classroom
+        ]);
+    }
 }

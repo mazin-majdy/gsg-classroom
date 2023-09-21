@@ -84,6 +84,7 @@ Route::middleware(['auth:admin,web'])->group(function () {
             Route::delete('/{classroom}', [ClassroomsController::class, 'forceDelete'])->name('force-delete');
         });
 
+    Route::get('classrooms/{classroom}/chat', [ClassroomsController::class])->name('classrooms.chat');
 
     Route::resource('classrooms', ClassroomsController::class);
 

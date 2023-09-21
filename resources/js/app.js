@@ -16,4 +16,4 @@ if (classroomId ?? false) {
 Echo.private('Notifications.' + userId)
     .notification(function (event) {
         alert(event.body);
-    })
+    });

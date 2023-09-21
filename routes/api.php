@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\V1\AccessTokensController;
 use App\Http\Controllers\Api\V1\ClassroomsController;
 use App\Http\Controllers\Api\V1\ClassworksController;
+use App\Http\Controllers\Api\V1\ClassroomMessagesController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -22,12 +23,14 @@ Route::prefix('v1')->group(function () {
         Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
             return $request->user();
         });
+
         Route::get('auth/access-token', [AccessTokensController::class, 'index']);
         Route::delete('auth/access-token/{id?}', [AccessTokensController::class, 'destroy']);
 
 
         Route::apiResource('classrooms', ClassroomsController::class);
         Route::apiResource('classrooms.classworks', ClassworksController::class);
+        Route::apiResource('classrooms.messages', ClassroomMessagesController::class);
     });
 
     Route::middleware('guest:sanctum')->group(function () {

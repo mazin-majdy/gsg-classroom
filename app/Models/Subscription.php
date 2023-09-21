@@ -5,10 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Prunable;
 
 class Subscription extends Model
 {
-    use HasFactory;
+    use HasFactory, Prunable;
     protected $fillable = [
         'plan_id', 'user_id', 'price', 'expires_at'
     ];
@@ -24,6 +25,13 @@ class Subscription extends Model
         );
     }
 
+    /**
+     * Get the prunable model query
+     */
+    public function prunable()
+    {
+        return static::where('expires_at', '=', now()->subYear());
+    }
 
     function user()
     {

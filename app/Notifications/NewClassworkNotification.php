@@ -32,7 +32,13 @@ class NewClassworkNotification extends Notification
     public function via(object $notifiable): array
     {
         //  Channels: mail, database, broadcast, vonage (sms), slack
-        $via = ['database', 'mail', 'broadcast', 'vonage', HadaraSmsChannel::class];
+        $via = [
+            'database',
+            // 'mail',
+            // 'broadcast',
+            // 'vonage',
+            // HadaraSmsChannel::class
+        ];
         // if($notifiable->receive_mail_notifications){
         //     $via[] = 'mail';
         // }

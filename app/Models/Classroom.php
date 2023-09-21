@@ -110,6 +110,11 @@ class Classroom extends Model
     {
         return $this->hasMany(Stream::class)->latest();
     }
+
+    public function messages()
+    {
+        return $this->morphMany(Message::class, 'recipient');
+    }
     // default
     public function getRouteKeyName()
     {
